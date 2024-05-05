@@ -94,23 +94,21 @@ function serve(path, client = false) {
 
 /**@param {Request} request */
 function ssr(request) {
-  if (origin) {
+  if (protocol_header || host_header) {
     const requestOrigin = get_origin(request.headers);
-    if (origin !== requestOrigin) {
-      const url = request.url.slice(request.url.split("/", 3).join("/").length);
-      request = new Request(origin + url, {
-        method: request.method,
-        headers: request.headers,
-        body: request.body,
-        referrer: request.referrer,
-        referrerPolicy: request.referrerPolicy,
-        mode: request.mode,
-        credentials: request.credentials,
-        cache: request.cache,
-        redirect: request.redirect,
-        integrity: request.integrity,
-      });
-    }
+    const url = request.url.slice(request.url.split("/", 3).join("/").length);
+    request = new Request(requestOrigin + url, {
+      method: request.method,
+      headers: request.headers,
+      body: request.body,
+      referrer: request.referrer,
+      referrerPolicy: request.referrerPolicy,
+      mode: request.mode,
+      credentials: request.credentials,
+      cache: request.cache,
+      redirect: request.redirect,
+      integrity: request.integrity
+    });
   }
 
   if (address_header && !request.headers.has(address_header)) {
